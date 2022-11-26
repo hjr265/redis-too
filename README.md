@@ -1,39 +1,48 @@
-# Recommendation Engine as Redis Module
+# Recommendation Engine As a Redis Module
 
 Redis Too is a Redis module that implements a Jaccardian similarity and memory-based collaborative filtering recommendation engine.
 
 ## Usage
 
+To build and load:
+
+``` sh
+make
+redis-server --loadmodule ./too.so
+```
+
+To add likes and generate recommendations:
+
 ```
 # Add likes
-> TOO.LIKE movies "The Shawshank Redemption" Sonic
-> TOO.LIKE movies "The Godfather" Sonic
-> TOO.LIKE movies "The Dark Knight" Sonic
-> TOO.LIKE movies "Pulp Fiction" Sonic
+redis> TOO.LIKE movies "The Shawshank Redemption" Sonic
+redis> TOO.LIKE movies "The Godfather" Sonic
+redis> TOO.LIKE movies "The Dark Knight" Sonic
+redis> TOO.LIKE movies "Pulp Fiction" Sonic
 
-> TOO.LIKE movies "The Godfather" Mario
-> TOO.LIKE movies "The Dark Knight" Mario
-> TOO.LIKE movies "The Shawshank Redemption" Mario
-> TOO.LIKE movies "The Prestige" Mario
-> TOO.LIKE movies "The Matrix" Mario
+redis> TOO.LIKE movies "The Godfather" Mario
+redis> TOO.LIKE movies "The Dark Knight" Mario
+redis> TOO.LIKE movies "The Shawshank Redemption" Mario
+redis> TOO.LIKE movies "The Prestige" Mario
+redis> TOO.LIKE movies "The Matrix" Mario
 
-> TOO.LIKE movies "The Godfather" Peach
-> TOO.LIKE movies "Inception" Peach
-> TOO.LIKE movies "Fight Club" Peach
-> TOO.LIKE movies "WALL·E" Peach
-> TOO.LIKE movies "Princess Mononoke" Peach
+redis> TOO.LIKE movies "The Godfather" Peach
+redis> TOO.LIKE movies "Inception" Peach
+redis> TOO.LIKE movies "Fight Club" Peach
+redis> TOO.LIKE movies "WALL·E" Peach
+redis> TOO.LIKE movies "Princess Mononoke" Peach
 
-> TOO.LIKE movies "The Prestige" Luigi
-> TOO.LIKE movies "The Dark Knight" Luigi
+redis> TOO.LIKE movies "The Prestige" Luigi
+redis> TOO.LIKE movies "The Dark Knight" Luigi
 
 # Refresh recommendations
-> TOO.REFRESH movies Sonic
-> TOO.REFRESH movies Mario
-> TOO.REFRESH movies Peach
-> TOO.REFRESH movies Luigi
+redis> TOO.REFRESH movies Sonic
+redis> TOO.REFRESH movies Mario
+redis> TOO.REFRESH movies Peach
+redis> TOO.REFRESH movies Luigi
 
 # Get recommendations
-> TOO.SUGGEST movies Luigi
+redis> TOO.SUGGEST movies Luigi
 1) "The Shawshank Redemption"
 2) "The Matrix"
 3) "Pulp Fiction"
