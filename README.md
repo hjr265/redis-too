@@ -60,6 +60,13 @@ redis> TOO.SUGGEST movies Luigi
 
 Contributions are welcome.
 
+## To-do
+
+- [ ] Add tests.
+- [ ] Ignore items added to the `ignores` list.
+- [ ] Add an option to auto-refresh suggestions.
+- [ ] Add an option to limit the number of similar users to check when refreshing suggestions.
+
 ## License
 
 Redis Too is available under the [BSD (3-Clause) License](LICENSE).
