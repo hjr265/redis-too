@@ -8,13 +8,11 @@ int TooLike_RedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc
 
     RedisModule_AutoMemory(ctx);
 
-    RedisModuleCallReply *reply;
-
     RedisModuleString *likeskey = RedisModule_CreateStringPrintf(ctx, "too:%s:%s:likes", RedisModule_StringPtrLen(argv[1], 0), RedisModule_StringPtrLen(argv[3], 0));
-    reply = RedisModule_Call(ctx, "SADD", "ss", likeskey, argv[2]);
+    RedisModule_Call(ctx, "SADD", "ss", likeskey, argv[2]);
 
     RedisModuleString *likerskey = RedisModule_CreateStringPrintf(ctx, "too:%s:%s:likers", RedisModule_StringPtrLen(argv[1], 0), RedisModule_StringPtrLen(argv[2], 0));
-    reply = RedisModule_Call(ctx, "SADD", "ss", likerskey, argv[3]);
+    RedisModule_Call(ctx, "SADD", "ss", likerskey, argv[3]);
 
     RedisModule_ReplyWithLongLong(ctx, 1);
     return REDISMODULE_OK;
@@ -25,13 +23,11 @@ int TooUnlike_RedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int ar
 
     RedisModule_AutoMemory(ctx);
 
-    RedisModuleCallReply *reply;
-
     RedisModuleString *likeskey = RedisModule_CreateStringPrintf(ctx, "too:%s:%s:likes", RedisModule_StringPtrLen(argv[1], 0), RedisModule_StringPtrLen(argv[3], 0));
-    reply = RedisModule_Call(ctx, "SREM", "ss", likeskey, argv[2]);
+    RedisModule_Call(ctx, "SREM", "ss", likeskey, argv[2]);
 
     RedisModuleString *likerskey = RedisModule_CreateStringPrintf(ctx, "too:%s:%s:likers", RedisModule_StringPtrLen(argv[1], 0), RedisModule_StringPtrLen(argv[2], 0));
-    reply = RedisModule_Call(ctx, "SREM", "ss", likerskey, argv[3]);
+    RedisModule_Call(ctx, "SREM", "ss", likerskey, argv[3]);
 
     RedisModule_ReplyWithLongLong(ctx, 1);
     return REDISMODULE_OK;
@@ -42,13 +38,11 @@ int TooDislike_RedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int a
 
     RedisModule_AutoMemory(ctx);
 
-    RedisModuleCallReply *reply;
-
     RedisModuleString *dislikeskey = RedisModule_CreateStringPrintf(ctx, "too:%s:%s:dislikes", RedisModule_StringPtrLen(argv[1], 0), RedisModule_StringPtrLen(argv[3], 0));
-    reply = RedisModule_Call(ctx, "SADD", "ss", dislikeskey, argv[2]);
+    RedisModule_Call(ctx, "SADD", "ss", dislikeskey, argv[2]);
 
     RedisModuleString *dislikerskey = RedisModule_CreateStringPrintf(ctx, "too:%s:%s:dislikers", RedisModule_StringPtrLen(argv[1], 0), RedisModule_StringPtrLen(argv[2], 0));
-    reply = RedisModule_Call(ctx, "SADD", "ss", dislikerskey, argv[3]);
+    RedisModule_Call(ctx, "SADD", "ss", dislikerskey, argv[3]);
 
     RedisModule_ReplyWithLongLong(ctx, 1);
     return REDISMODULE_OK;
@@ -59,13 +53,11 @@ int TooUndislike_RedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int
 
     RedisModule_AutoMemory(ctx);
 
-    RedisModuleCallReply *reply;
-
     RedisModuleString *dislikeskey = RedisModule_CreateStringPrintf(ctx, "too:%s:%s:dislikes", RedisModule_StringPtrLen(argv[1], 0), RedisModule_StringPtrLen(argv[3], 0));
-    reply = RedisModule_Call(ctx, "SREM", "ss", dislikeskey, argv[2]);
+    RedisModule_Call(ctx, "SREM", "ss", dislikeskey, argv[2]);
 
     RedisModuleString *dislikerskey = RedisModule_CreateStringPrintf(ctx, "too:%s:%s:dislikers", RedisModule_StringPtrLen(argv[1], 0), RedisModule_StringPtrLen(argv[2], 0));
-    reply = RedisModule_Call(ctx, "SREM", "ss", dislikerskey, argv[3]);
+    RedisModule_Call(ctx, "SREM", "ss", dislikerskey, argv[3]);
 
     RedisModule_ReplyWithLongLong(ctx, 1);
     return REDISMODULE_OK;
@@ -79,8 +71,8 @@ int TooRefresh_RedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int a
     RedisModuleString *class = argv[1];
     RedisModuleString *user = argv[2];
 
-    char *classptr = RedisModule_StringPtrLen(class, 0);
-    char *userptr = RedisModule_StringPtrLen(user, 0);
+    const char *classptr = RedisModule_StringPtrLen(class, 0);
+    const char *userptr = RedisModule_StringPtrLen(user, 0);
 
     RedisModuleCallReply *reply;
 
@@ -106,8 +98,7 @@ int TooRefresh_RedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int a
         }
 
         double jaccard = CalcJaccard(ctx, class, user, other);
-        RedisModuleCallReply *zaddreply;
-        zaddreply = RedisModule_Call(ctx, "ZADD", "sss", RedisModule_CreateStringPrintf(ctx, "too:%s:%s:similars", classptr, userptr), RedisModule_CreateStringFromDouble(ctx, jaccard), other);
+        RedisModule_Call(ctx, "ZADD", "sss", RedisModule_CreateStringPrintf(ctx, "too:%s:%s:similars", classptr, userptr), RedisModule_CreateStringFromDouble(ctx, jaccard), other);
     }
 
     reply = RedisModule_Call(ctx, "ZRANGE", "sccc", RedisModule_CreateStringPrintf(ctx, "too:%s:%s:similars", classptr, userptr), "0", "-1", "REV");
@@ -126,7 +117,7 @@ int TooRefresh_RedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int a
     n = RedisModule_CallReplyLength(reply);
     for (int i = 0; i < n; i++) {
         RedisModuleString *item = RedisModule_CreateStringFromCallReply(RedisModule_CallReplyArrayElement(reply, i));
-        char *itemptr = RedisModule_StringPtrLen(item, 0);
+        const char *itemptr = RedisModule_StringPtrLen(item, 0);
 
         double score = 0;
         double total = 0;
@@ -140,7 +131,7 @@ int TooRefresh_RedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int a
 
             RedisModuleCallReply *zscorereply = RedisModule_Call(ctx, "ZSCORE", "ss", RedisModule_CreateStringPrintf(ctx, "too:%s:%s:similars", classptr, userptr), liker);
             RedisModuleString *scorestr = RedisModule_CreateStringFromCallReply(zscorereply);
-            char *scoreptr = RedisModule_StringPtrLen(scorestr, 0);
+            const char *scoreptr = RedisModule_StringPtrLen(scorestr, 0);
             score += atof(scoreptr);
             total++;
 
@@ -154,7 +145,7 @@ int TooRefresh_RedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int a
 
             RedisModuleCallReply *zscorereply = RedisModule_Call(ctx, "ZSCORE", "ss", RedisModule_CreateStringPrintf(ctx, "too:%s:%s:similars", classptr, userptr), disliker);
             RedisModuleString *scorestr = RedisModule_CreateStringFromCallReply(zscorereply);
-            char *scoreptr = RedisModule_StringPtrLen(scorestr, 0);
+            const char *scoreptr = RedisModule_StringPtrLen(scorestr, 0);
             score += atof(scoreptr);
             total++;
             
@@ -162,8 +153,7 @@ int TooRefresh_RedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int a
 
         score /= total;
 
-        RedisModuleCallReply *zaddreply = RedisModule_Call(ctx, "ZADD", "sss", RedisModule_CreateStringPrintf(ctx, "too:%s:%s:newsuggestions", classptr, userptr), RedisModule_CreateStringFromDouble(ctx, score), item);
-
+        RedisModule_Call(ctx, "ZADD", "sss", RedisModule_CreateStringPrintf(ctx, "too:%s:%s:newsuggestions", classptr, userptr), RedisModule_CreateStringFromDouble(ctx, score), item);
     }
 
     reply = RedisModule_Call(ctx, "RENAME", "ss", RedisModule_CreateStringPrintf(ctx, "too:%s:%s:newsuggestions", classptr, userptr), RedisModule_CreateStringPrintf(ctx, "too:%s:%s:suggestions", classptr, userptr));
@@ -182,8 +172,8 @@ int TooSuggest_RedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int a
     RedisModuleString *class = argv[1];
     RedisModuleString *user = argv[2];
 
-    char *classptr = RedisModule_StringPtrLen(class, 0);
-    char *userptr = RedisModule_StringPtrLen(user, 0);
+    const char *classptr = RedisModule_StringPtrLen(class, 0);
+    const char *userptr = RedisModule_StringPtrLen(user, 0);
 
     RedisModuleCallReply *reply = RedisModule_Call(ctx, "ZRANGE", "sccc", RedisModule_CreateStringPrintf(ctx, "too:%s:%s:suggestions", classptr, userptr), "0", "-1", "REV");
     RedisModule_ReplyWithCallReply(ctx, reply);
@@ -218,9 +208,9 @@ int RedisModule_OnLoad(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) 
 double CalcJaccard(RedisModuleCtx *ctx, RedisModuleString *class, RedisModuleString *user, RedisModuleString *other) {
     RedisModule_AutoMemory(ctx);
 
-    char *classptr = RedisModule_StringPtrLen(class, 0);
-    char *userptr = RedisModule_StringPtrLen(user, 0);
-    char *otherptr = RedisModule_StringPtrLen(other, 0);
+    const char *classptr = RedisModule_StringPtrLen(class, 0);
+    const char *userptr = RedisModule_StringPtrLen(user, 0);
+    const char *otherptr = RedisModule_StringPtrLen(other, 0);
 
     RedisModuleCallReply *reply;
 
