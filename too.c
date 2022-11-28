@@ -163,7 +163,8 @@ int RedisModule_OnLoad(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) 
     if (RedisModule_CreateCommand(ctx, "too.like", TooLike_RedisCommand, "write deny-oom fast", 1, 1, 1) == REDISMODULE_ERR)
         return REDISMODULE_ERR;
 
-    if (RedisModule_CreateCommand(ctx, "too.dislike", TooLike_RedisCommand, "write deny-oom fast", 1, 1, 1) == REDISMODULE_ERR)
+    if (RedisModule_CreateCommand(ctx, "too.dislike", TooDislike_RedisCommand, "write deny-oom fast", 1, 1, 1) == REDISMODULE_ERR)
+        return REDISMODULE_ERR;
         return REDISMODULE_ERR;
 
     if (RedisModule_CreateCommand(ctx, "too.refresh", TooRefresh_RedisCommand, "write deny-oom", 1, 1, 1) == REDISMODULE_ERR)
