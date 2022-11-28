@@ -20,6 +20,23 @@ int TooLike_RedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc
     return REDISMODULE_OK;
 }
 
+int TooUnlike_RedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) {
+    if (argc != 4) return RedisModule_WrongArity(ctx);
+
+    RedisModule_AutoMemory(ctx);
+
+    RedisModuleCallReply *reply;
+
+    RedisModuleString *likeskey = RedisModule_CreateStringPrintf(ctx, "too:%s:%s:likes", RedisModule_StringPtrLen(argv[1], 0), RedisModule_StringPtrLen(argv[3], 0));
+    reply = RedisModule_Call(ctx, "SREM", "ss", likeskey, argv[2]);
+
+    RedisModuleString *likerskey = RedisModule_CreateStringPrintf(ctx, "too:%s:%s:likers", RedisModule_StringPtrLen(argv[1], 0), RedisModule_StringPtrLen(argv[2], 0));
+    reply = RedisModule_Call(ctx, "SREM", "ss", likerskey, argv[3]);
+
+    RedisModule_ReplyWithLongLong(ctx, 1);
+    return REDISMODULE_OK;
+}
+
 int TooDislike_RedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) {
     if (argc != 4) return RedisModule_WrongArity(ctx);
 
@@ -32,6 +49,23 @@ int TooDislike_RedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int a
 
     RedisModuleString *dislikerskey = RedisModule_CreateStringPrintf(ctx, "too:%s:%s:dislikers", RedisModule_StringPtrLen(argv[1], 0), RedisModule_StringPtrLen(argv[2], 0));
     reply = RedisModule_Call(ctx, "SADD", "ss", dislikerskey, argv[3]);
+
+    RedisModule_ReplyWithLongLong(ctx, 1);
+    return REDISMODULE_OK;
+}
+
+int TooUndislike_RedisCommand(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) {
+    if (argc != 4) return RedisModule_WrongArity(ctx);
+
+    RedisModule_AutoMemory(ctx);
+
+    RedisModuleCallReply *reply;
+
+    RedisModuleString *dislikeskey = RedisModule_CreateStringPrintf(ctx, "too:%s:%s:dislikes", RedisModule_StringPtrLen(argv[1], 0), RedisModule_StringPtrLen(argv[3], 0));
+    reply = RedisModule_Call(ctx, "SREM", "ss", dislikeskey, argv[2]);
+
+    RedisModuleString *dislikerskey = RedisModule_CreateStringPrintf(ctx, "too:%s:%s:dislikers", RedisModule_StringPtrLen(argv[1], 0), RedisModule_StringPtrLen(argv[2], 0));
+    reply = RedisModule_Call(ctx, "SREM", "ss", dislikerskey, argv[3]);
 
     RedisModule_ReplyWithLongLong(ctx, 1);
     return REDISMODULE_OK;
@@ -163,8 +197,13 @@ int RedisModule_OnLoad(RedisModuleCtx *ctx, RedisModuleString **argv, int argc) 
     if (RedisModule_CreateCommand(ctx, "too.like", TooLike_RedisCommand, "write deny-oom fast", 1, 1, 1) == REDISMODULE_ERR)
         return REDISMODULE_ERR;
 
+    if (RedisModule_CreateCommand(ctx, "too.unlike", TooUnlike_RedisCommand, "write deny-oom fast", 1, 1, 1) == REDISMODULE_ERR)
+        return REDISMODULE_ERR;
+
     if (RedisModule_CreateCommand(ctx, "too.dislike", TooDislike_RedisCommand, "write deny-oom fast", 1, 1, 1) == REDISMODULE_ERR)
         return REDISMODULE_ERR;
+
+    if (RedisModule_CreateCommand(ctx, "too.undislike", TooUndislike_RedisCommand, "write deny-oom fast", 1, 1, 1) == REDISMODULE_ERR)
         return REDISMODULE_ERR;
 
     if (RedisModule_CreateCommand(ctx, "too.refresh", TooRefresh_RedisCommand, "write deny-oom", 1, 1, 1) == REDISMODULE_ERR)

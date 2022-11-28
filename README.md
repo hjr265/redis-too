@@ -52,7 +52,9 @@ redis> TOO.SUGGEST movies Luigi
 ## Commands
 
 - `TOO.LIKE class item user`: Adds `item` of type `class` to the user's list of likes.
+- `TOO.UNLIKE class item user`: Removes `item` of type `class` to the user's list of likes.
 - `TOO.DISLIKE class item user`: Adds `item` of type `class` to user's list of dislikes.
+- `TOO.UNDISLIKE class item user`: Removes `item` of type `class` to user's list of dislikes.
 - `TOO.REFRESH class user`: Refreshes list of suggestions for `user` of type `class`.
 - `TOO.SUGGEST class user`: Returns list of suggestions for `user` of type `class`.
 
